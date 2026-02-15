@@ -4,10 +4,10 @@
 ## Project Overview
 โปรเจกต์นี้เป็นการจำลองระบบ CI/CD Pipeline ระดับ Enterprise สำหรับการ Deploy เว็บแอปพลิเคชัน (Tetris Game) บน **AWS EKS (Elastic Kubernetes Service)**. โดยใช้แนวคิด **DevSecOps** เพื่อรวมขั้นตอนความปลอดภัย (Security Scanning) เข้าไปในทุกขั้นตอน และใช้หลักการ **GitOps** ผ่าน **ArgoCD** เพื่อจัดการการส่งมอบซอฟต์แวร์ให้มีความเสถียรและสามารถซ่อมแซมตัวเองได้ (Self-healing).
 
-## 👥 Team Members & Roles
+## 👥 Team Members & Roles(คร่าวๆ)
 1. **นางสาวณัฐธิดา บุญเสือ (6609650350)**: **GitOps & SRE Specialist** - รับผิดชอบการจัดการ Kubernetes Manifests และ Continuous Deployment ผ่าน ArgoCD.
-2. **[ชื่อ] ([รหัส])**: **DevSecOps Engineer** - รับผิดชอบ Jenkins CI Pipeline และความปลอดภัย (Trivy, SonarQube).
-3. **[ชื่อ] ([รหัส])**: **Infrastructure Architect** - รับผิดชอบการใช้ Terraform เพื่อสร้าง VPC และ EKS Cluster.
+2. **นายปิติภัทร จาดเนือง (6609650483)**: **DevSecOps Engineer** - รับผิดชอบ Jenkins CI Pipeline และความปลอดภัย (Trivy, SonarQube).
+3. **นายภูมิภัทร แสนทองแก้ว (6609650574)**: **Infrastructure Architect** - รับผิดชอบการใช้ Terraform เพื่อสร้าง VPC และ EKS Cluster.
 
 ## 🛠 Tech Stack
 * **Cloud Platform:** AWS (EKS, EC2, ECR)
@@ -16,7 +16,7 @@
 * **Security & Quality:** Trivy, SonarQube, OWASP Dependency Check
 * **Containerization:** Docker & Kubernetes
 
-## 📂 Repository Structure คร่าวๆ
+## 📂 Repository Structure(คร่าวๆ)
 * `/EKS-TF`: Terraform scripts สำหรับสร้าง EKS Cluster
 * `/Jenkins-Server-TF`: Terraform scripts สำหรับสร้าง Jenkins Server
 * `/Jenkins-Pipeline-Code`: รหัสต้นฉบับของ CI/CD Pipeline
