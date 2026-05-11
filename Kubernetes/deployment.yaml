@@ -1,21 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
-  name: netflix-app
+  name: tetris-app
+  namespace: tetris-app
   labels:
-    app: netflix-app
+    app: tetris-app
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
-      app: netflix-app
+      app: tetris-app
+
   template:
     metadata:
       labels:
-        app: netflix-app
+        app: tetris-app
+
     spec:
       containers:
-      - name: netflix-app
+      - name: tetris-app
+
         image: avian19/netflix:latest
+
         ports:
         - containerPort: 80
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
