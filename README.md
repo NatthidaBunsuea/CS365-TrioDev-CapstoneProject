@@ -22,3 +22,24 @@
 * `/Jenkins-Pipeline-Code`: รหัสต้นฉบับของ CI/CD Pipeline
 * `/Manifest-file`: ไฟล์คอนฟิก Kubernetes สำหรับการ Deployment (CD)
 * `/Tetris-V2`: ซอร์สโค้ดของแอปพลิเคชันเวอร์ชันล่าสุด
+
+
+# Aida Work Detail
+# Continuous Deployment & GitOps Documentation (SRE Role)
+
+ในส่วนนี้เป็นการจัดการด้านการส่งมอบซอฟต์แวร์ (Continuous Deployment) โดยใช้หลักการ **GitOps** เพื่อให้สถานะของแอปพลิเคชันบน Cluster ตรงกับค่าที่กำหนดไว้ใน Repository นี้เสมอ.
+
+## Kubernetes Resources
+ไฟล์คอนฟิกพื้นฐานประกอบด้วย:
+* **`deployment.yaml`**: กำหนดการทำงานของแอปพลิเคชัน (Replicas, Container Image, Resource Limits).
+* **`service.yaml`**: กำหนดการเข้าถึงแอปพลิเคชันผ่าน **AWS Load Balancer**.
+
+## Deployment Workflow (ArgoCD)
+1. เมื่อ Jenkins CI Pipeline ทำการ Build และ Scan Docker Image เสร็จสิ้น จะทำการอัปเดต Image Tag มายังไฟล์ในโฟลเดอร์นี้.
+2. **ArgoCD Controller** จะตรวจพบการเปลี่ยนแปลง (Out-of-Sync) และทำการดึงค่าใหม่ไปใช้บน EKS Cluster โดยอัตโนมัติ.
+3. ระบบจะตรวจสอบสุขภาพของ Pods (Self-healing) หากเกิดความผิดพลาด ArgoCD จะทำการแจ้งเตือนหรือรักษาค่าเดิมไว้.
+
+## Future Roadmap (Extension Ideas)
+* การเพิ่ม **Ingress Controller** สำหรับจัดการ Domain Name และ SSL.
+* การติดตั้ง **Prometheus & Grafana** เพื่อทำ Monitoring ตามมาตรฐาน SRE.
+
