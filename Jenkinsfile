@@ -30,7 +30,7 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t $IMAGE ./App'
+                sh 'docker build -t $IMAGE ./Tetris-V2'
             }
         }
 
