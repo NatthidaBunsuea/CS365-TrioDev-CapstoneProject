@@ -28,12 +28,28 @@ pipeline {
             }
         }
 
+        stage('Trivy FS Scan') {
+    steps {
+        sh '''
+        trivy fs --severity HIGH,CRITICAL --exit-code 0 ./App/Tetris-V2
+        '''
+    }
+}
+        
         stage('Build Image') {
             steps {
                 sh 'docker build -t $IMAGE ./App/Tetris-V2'
             }
         }
 
+        stage('Trivy Image Scan') {
+            steps {
+                sh '''
+                trivy image --severity HIGH,CRITICAL --exit-code 0 $IMAGE
+                '''
+            }
+        }
+        
         stage('Push Image') {
             steps {
                 sh 'docker push $IMAGE'
