@@ -23,7 +23,7 @@ spec:
       containers:
       - name: tetris-app
 
-        image: natthidabunsuea/tetris:latest
+        image: natthidabunsuea/tetris:4
 
         ports:
         - containerPort: 80
