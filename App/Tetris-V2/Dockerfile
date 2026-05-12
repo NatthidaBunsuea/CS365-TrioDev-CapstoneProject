@@ -16,8 +16,11 @@ COPY . .
 # Build the React app
 RUN npm run build
 
-# Expose the port that the app will run on (usually 3000 by default)
-EXPOSE 3000
+# Expose the port that the app will run on
+FROM nginx:alpine
 
-# Start the React app when the container starts
-CMD [ "npm", "start" ]
+COPY --from=builder /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
