@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         IMAGE = "natthidabunsuea/tetris:${BUILD_NUMBER}"
+        SCANNER_HOME = tool 'sonar-scanner'
     }
-
     stages {
 
         stage('Checkout') {
@@ -28,6 +28,29 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                dir('App/Tetris-V2') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=tetris-app \
+                        -Dsonar.projectName=tetris-app \
+                        -Dsonar.sources=src
+                        '''
+                    }
+                }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+        
         stage('Trivy FS Scan') {
     steps {
         sh '''
