@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: tetris-service
+  namespace: tetris-app
+
+spec:
+  type: LoadBalancer
+
+  selector:
+    app: tetris-app
+
+  ports:
+  - port: 80
+    targetPort: 80
