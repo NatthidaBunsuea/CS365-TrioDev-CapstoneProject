@@ -99,3 +99,36 @@
 * การเพิ่ม **Ingress Controller** สำหรับจัดการ Domain Name และ SSL.
 * การติดตั้ง **Prometheus & Grafana** เพื่อทำ Monitoring ตามมาตรฐาน SRE.
 
+# Woon Work Detail
+## CI & Security Pipeline Documentation (DevSecOps Role)
+ในส่วนนี้รับผิดชอบการออกแบบและพัฒนา Continuous Integration Pipeline พร้อมผสานมาตรการด้านความปลอดภัย (DevSecOps) เพื่อให้ทุกการเปลี่ยนแปลงของโค้ดผ่านกระบวนการตรวจสอบคุณภาพและความปลอดภัยก่อนนำไปใช้งานจริง
+
+## CI Pipeline Architecture (Jenkins – Pipeline as Code)
+ใช้ Jenkinsfile ในรูปแบบ Pipeline as Code เพื่อควบคุมกระบวนการทำงานทั้งหมดของระบบ CI โดยมีขั้นตอนหลักดังนี้:
+* Source Code Checkout จาก GitHub Repository
+* Build Application
+* Static Code Analysis ด้วย SonarQube
+* Dependency Vulnerability Scan ด้วย OWASP Dependency-Check
+* Docker Image Build
+* Container Image Scan ด้วย Trivy
+* Push Docker Image ไปยัง Docker Hub หรือ AWS ECR
+
+Pipeline ถูกออกแบบให้ทำงานแบบอัตโนมัติเมื่อมีการ Commit หรือ Pull Request เพื่อป้องกันโค้ดที่มีช่องโหว่เข้าสู่ระบบหลัก
+
+## Security Controls & Quality Gates
+เพื่อยกระดับมาตรฐานความปลอดภัย มีการกำหนด Quality Gate ดังนี้:
+* SonarQube ตรวจสอบ Code Smell, Bug, และ Vulnerability
+* OWASP Dependency-Check วิเคราะห์ช่องโหว่จาก Third-party Libraries
+* Trivy ตรวจสอบ Container Image ก่อนการ Deploy
+
+หากตรวจพบ Critical/High Vulnerability ระบบจะหยุด Pipeline โดยอัตโนมัติ (Fail Fast Principle) เพื่อป้องกันความเสี่ยงด้านความปลอดภัย
+
+## Containerization Strategy
+มีการออกแบบ Dockerfile ให้เหมาะสมกับ Production Environment โดยคำนึงถึง:
+* การเลือก Base Image ที่มีความปลอดภัย
+* การลดขนาด Image เพื่อลด Attack Surface
+* การกำหนด Non-root User ภายใน Container
+* การจัดการ Resource อย่างเหมาะสม
+
+Docker Image จะถูก Push ไปยัง Registry ก็ต่อเมื่อผ่านขั้นตอน Security Scan เท่านั้น
+
