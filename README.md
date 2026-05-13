@@ -25,19 +25,101 @@
 
 
 # Aida Work Detail
-# Continuous Deployment & GitOps Documentation (SRE Role)
 
-ในส่วนนี้เป็นการจัดการด้านการส่งมอบซอฟต์แวร์ (Continuous Deployment) โดยใช้หลักการ **GitOps** เพื่อให้สถานะของแอปพลิเคชันบน Cluster ตรงกับค่าที่กำหนดไว้ใน Repository นี้เสมอ.
+# Continuous Deployment & GitOps Documentation (SRE / DevSecOps Role)
+
+ในส่วนนี้เป็นการจัดการด้าน **Continuous Deployment และ GitOps** สำหรับระบบ Tetris DevSecOps CI/CD Pipeline บน AWS EKS โดยใช้ Jenkins, DockerHub และ ArgoCD เพื่อให้สถานะของ Application บน Kubernetes Cluster ตรงกับค่าที่กำหนดไว้ใน GitHub Repository อยู่เสมอ.
 
 ## Kubernetes Resources
-ไฟล์คอนฟิกพื้นฐานประกอบด้วย:
-* **`deployment.yaml`**: กำหนดการทำงานของแอปพลิเคชัน (Replicas, Container Image, Resource Limits).
-* **`service.yaml`**: กำหนดการเข้าถึงแอปพลิเคชันผ่าน **AWS Load Balancer**.
 
-## Deployment Workflow (ArgoCD)
-1. เมื่อ Jenkins CI Pipeline ทำการ Build และ Scan Docker Image เสร็จสิ้น จะทำการอัปเดต Image Tag มายังไฟล์ในโฟลเดอร์นี้.
-2. **ArgoCD Controller** จะตรวจพบการเปลี่ยนแปลง (Out-of-Sync) และทำการดึงค่าใหม่ไปใช้บน EKS Cluster โดยอัตโนมัติ.
-3. ระบบจะตรวจสอบสุขภาพของ Pods (Self-healing) หากเกิดความผิดพลาด ArgoCD จะทำการแจ้งเตือนหรือรักษาค่าเดิมไว้.
+ไฟล์ Kubernetes Manifest หลักประกอบด้วย:
+
+* **`deployment.yaml`**
+  กำหนดรายละเอียดของ Application Deployment เช่น:
+
+  * Replica จำนวน Pods
+  * Docker Image Version
+  * Rolling Update Strategy
+  * Resource Configuration
+
+* **`service.yaml`**
+  สร้าง Kubernetes Service แบบ `LoadBalancer` เพื่อเชื่อมต่อ Application ออกสู่อินเทอร์เน็ตผ่าน AWS Load Balancer.
+
+* **`hpa.yaml`**
+  กำหนด Horizontal Pod Autoscaler (HPA) สำหรับ Auto Scaling ตามการใช้งาน Resource ของระบบ.
+
+* **`namespace.yaml`**
+  แยก Resource ของระบบให้อยู่ภายใน Namespace `tetris-app`.
+
+
+# GitOps Deployment Workflow (ArgoCD)
+
+## 1. Jenkins Pipeline
+
+เมื่อ Developer Push Source Code ขึ้น GitHub:
+
+* Jenkins จะทำการ Checkout Source Code
+* วิเคราะห์คุณภาพโค้ดด้วย SonarQube
+* ตรวจสอบ Quality Gate
+* สแกนช่องโหว่ด้วย Trivy FS Scan
+* Build Docker Image
+* สแกน Docker Image ด้วย Trivy Image Scan
+* Push Image ไปยัง DockerHub
+
+หลังจาก Build สำเร็จ Jenkins จะอัปเดตค่า Image Tag ภายใน `deployment.yaml` และ Push Manifest กลับขึ้น GitHub Repository.
+
+
+## 2. ArgoCD Synchronization
+
+ArgoCD ทำงานในรูปแบบ GitOps Controller โดย:
+
+* ตรวจจับการเปลี่ยนแปลงของ Kubernetes Manifest จาก GitHub Repository
+* เปรียบเทียบสถานะใน Git กับสถานะจริงบน EKS Cluster
+* Sync ค่าล่าสุดลง Kubernetes Cluster อัตโนมัติ
+
+เมื่อ Sync สำเร็จ ระบบจะแสดงสถานะ:
+
+* **Synced**
+* **Healthy**
+
+บนหน้า ArgoCD Dashboard.
+
+
+## 3. Rolling Update & Self-Healing
+
+ระบบ Deployment ถูกออกแบบให้รองรับ:
+
+### Rolling Update
+
+Kubernetes จะทยอยสร้าง Pod ใหม่และลบ Pod เดิมทีละส่วน เพื่อลด Downtime ระหว่าง Deployment.
+
+### Self-Healing
+
+หาก Pod เกิดปัญหา เช่น:
+
+* Image Pull Error
+* Container Crash
+* Pod Failure
+
+Kubernetes และ ArgoCD จะตรวจพบความผิดปกติและพยายามรักษาสถานะของระบบให้กลับมาทำงานตาม Manifest ล่าสุดที่ถูกต้อง.
+
+
+## 4. Deployment Monitoring
+
+การตรวจสอบสถานะระบบใช้เครื่องมือดังนี้:
+
+* **ArgoCD Dashboard**
+  ตรวจสอบ Sync Status และ Health Status
+
+* **kubectl / CloudShell**
+  ใช้ตรวจสอบ Pods, Services, Rollout และ Rollback
+
+* **CloudWatch**
+  ใช้ตรวจสอบ Logs และ Metrics บน AWS Infrastructure
+
+* **Metrics Server + HPA**
+  ใช้สำหรับ Resource Monitoring และ Auto Scaling ภายใน Cluster.
+
 
 # Oom Work Detail
 # Infrastructure & Cloud Architect (Cloud Architect Role)
