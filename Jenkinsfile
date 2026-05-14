@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    
+    options {
+        disableConcurrentBuilds()
+    }
 
     environment {
         IMAGE = "natthidabunsuea/tetris:${BUILD_NUMBER}"
