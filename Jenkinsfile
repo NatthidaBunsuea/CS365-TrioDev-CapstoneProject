@@ -14,6 +14,17 @@ pipeline {
             }
         }
 
+        stage('Check Skip CI') {
+    steps {
+        script {
+            def msg = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+            if (msg.contains('[skip ci]')) {
+                currentBuild.result = 'SUCCESS'
+                error('Skip CI commit from Jenkins')
+            }
+        }
+    }
+}
         stage('Docker Login') {
             steps {
                 withCredentials([
@@ -97,8 +108,9 @@ pipeline {
                     git config user.email jenkins@mail.com
 
                     git add .
-                    git commit -m "Update image ${BUILD_NUMBER}" || true
 
+                    git commit -m "Update image ${BUILD_NUMBER} [skip ci]" || true
+                    
                     git push https://$TOKEN@github.com/NatthidaBunsuea/CS365-TrioDev-CapstoneProject.git HEAD:cd/gitops
                     '''
                 }
