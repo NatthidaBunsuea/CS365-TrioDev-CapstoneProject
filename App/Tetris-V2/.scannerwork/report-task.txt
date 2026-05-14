@@ -2,5 +2,5 @@ projectKey=tetris-app
 serverUrl=http://localhost:9000
 serverVersion=9.9.8.100196
 dashboardUrl=http://localhost:9000/dashboard?id=tetris-app
-ceTaskId=AZ4k8y7bSv6eQaq7rXr-
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AZ4k8y7bSv6eQaq7rXr-
+ceTaskId=AZ4k9L2_Sv6eQaq7rXr_
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AZ4k9L2_Sv6eQaq7rXr_
